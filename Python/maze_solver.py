@@ -3,6 +3,28 @@ import numpy as np
 import math
 import queue
 
+"""
+This project is about generating a random (and bad) maze, and ascertaining
+whether a path exists from the start of the maze to the end, and if so,
+what that path is.
+
+See the main function for an example of how to run the code.
+
+Possible TODO:
+  - update random_maze to return a maze that looks less like blood spatter
+    and more like a maze.
+  - write maze and solution to a printable image
+  - allow non-square mazes (by allowing users to set dimensions)
+"""
+
+
+def main():
+    test = Maze(1000, 0.3)
+    test.show_maze()
+    track = test.bfs()
+    if(track):
+        test.show_maze()
+
 class Maze():
     num_grids: int
     num_rowscols: int
@@ -167,12 +189,6 @@ def random_maze(num_grids: int=100, percent_blocked: float=0.3) -> np.array:
         maze[tup[0], tup[1]] = 2
     return maze
 
-def main():
-    test = Maze(1000, 0.3)
-    test.show_maze()
-    track = test.bfs()
-    if(track):
-        test.show_maze()
 
 if __name__ == "__main__":
     main()
