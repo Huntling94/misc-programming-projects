@@ -28,11 +28,30 @@ class Maze():
         plt.matshow(self.maze, cmap=plt.cm.gray_r)
         plt.show()
     
-    def get_node_index(self, position: tuple):
+    def get_node_index(self, position: tuple) -> int:
+        """
+        Returns node number of entry
+
+        Arguments:
+        position: tuple, (int, int)
+
+        Returns:
+        integer, the node number of the entry into the maze
+        """
         i, j = position
         return self.num_rowscols*i + j
     
-    def is_occupied(self, position: tuple):
+    def is_occupied(self, position: tuple) -> bool:
+        """
+        Returns whether a particular position in the maze is occupied.
+        A position can be occupied by being out of bounds, or blockaded.
+
+        Arguments:
+        position: tuple, (int, int)
+
+        Returns:
+        True if position is blockaded. False otherwise.
+        """
         if position[0] >= self.num_rowscols or position[0] < 0:
             return True
         elif position[1] >= self.num_rowscols or position[1] < 0:
@@ -41,6 +60,16 @@ class Maze():
             return bool(self.maze[position[0], position[1]])
         
     def possible_paths(self, position: tuple) -> list:
+        """
+        Returns a list of the immediate possible paths that can be taken
+        from the position.
+
+        Arguments:
+        position: tuple, (int, int)
+
+        Returns:
+        list of possible paths (an empty list means no possible paths).
+        """
         paths = []
         i, j = position
         if not self.is_occupied((i+1, j)):
@@ -53,10 +82,19 @@ class Maze():
             paths.append((i, j-1))
         return paths
     
-    def bfs(self, add_trail: bool=True):
+    def bfs(self, add_trail: bool=True) -> list:
         """
-        Returns empty list if no path exists, otherwise returns a list of the
-        path to take from start to end.
+        Treats each entry as a node, and its immediate accessible path,
+        (up, down, left, right) as vertices between nodes. Performs breadth
+        first search on this graph until the queue empties without reaching
+        end, or until end is reached.
+
+        Arguments:
+        add_trail: bool (default True)
+
+        Returns:
+        list of the steps to take from start to end if the end can be reached
+        otherwise an empty list.
         """
         q = queue.Queue(self.num_grids)
         q.put(self.start)
@@ -80,13 +118,13 @@ class Maze():
             print(f"No path out of the maze from {self.start} ==> {self.end}")
             return []
                     
-        phew = backtrack[self.get_node_index(self.end)]
+        prev = backtrack[self.get_node_index(self.end)]
         track = [self.end]
         
-        while phew != self.start:
-            track.append(phew)
-            i, j = phew
-            phew = backtrack[self.get_node_index(phew)]
+        while prev != self.start:
+            track.append(prev)
+            i, j = prev
+            prev = backtrack[self.get_node_index(prev)]
             
         track.append(self.start)
         track.reverse()
@@ -97,6 +135,18 @@ class Maze():
         return track
 
 def random_maze(num_grids: int=100, percent_blocked: float=0.3) -> np.array:
+    """
+    Creates a random maze with some blockades. It is assumed that the
+    start and end positions at the top left and bottom right of the maze
+    respectively.
+
+    Arguments:
+    num_grids: int, number of entries in the maze (maze is square)
+    percent_blocked: float, percent of maze blockaded
+
+    Returns:
+    np.array, with entries set to 0 as walkable paths, and 2 as blockades
+    """
     while(percent_blocked > 1):
         percent_blocked /= 100
     
