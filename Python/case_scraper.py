@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 import sys
+import requests
+import time
 import datetime
 import os
 from bs4 import BeautifulSoup
@@ -46,8 +48,7 @@ def get_HC_case(year: int, number: int, extension: str="rtf"):
     if (extension not in VALID_TYPES):
         raise Exception(f"Invalid document extension: {extension}.")
 
-    import requests
-    import time
+
     BASE_URL_RTF_DL = "http://eresources.hcourt.gov.au/downloadrtf/"
     BASE_URL_PDF_DL = "http://eresources.hcourt.gov.au/downloadPdf/"
     BASE_URL_INFO = "http://eresources.hcourt.gov.au/showCase/"
