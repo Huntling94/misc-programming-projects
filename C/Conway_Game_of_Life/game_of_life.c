@@ -6,8 +6,6 @@
 #include <time.h>
 #include <math.h>
 
-#undef main
-
 #define NUM_NEIGHBOURS 8
 #define ALIVE 1
 #define DEAD 0
