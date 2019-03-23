@@ -3,6 +3,10 @@
 #include <string.h>
 #include <assert.h>
 #include <unistd.h>
+#include <time.h>
+#include <math.h>
+
+#undef main
 
 #define NUM_NEIGHBOURS 8
 #define ALIVE 1
@@ -13,7 +17,7 @@ typedef struct system system_t;
 struct system{
     int** grid;
     int dim;
-    int generation;
+    int generation; 
 };
 
 int get_point(system_t* system, int i, int j)
@@ -83,7 +87,7 @@ void print_system(system_t* system)
         printf("\n");
     }
 }
-void generation_advance(system_t* system)
+void evolve(system_t* system)
 {
     int new_gen[system->dim][system->dim];
     int i, j;
@@ -129,29 +133,40 @@ system_t* create_system(int dim)
     return system;
 }
 
+void seed_random_percent(system_t* system, double percent)
+{
+    srand(getpid() ^ time(0));
+    while(percent > 1){
+        percent/=100;
+    }
+    int i;
+    for(i=0; i<floor(percent*100); i++){
+        int num = rand()%(system->dim*system->dim);
+        system->grid[num/system->dim][num%system->dim] = 1;
+    }
+
+}
+
 int main(int argc, char* argv[])
 {
     
     int n = atoi(argv[1]);
+    if(n < 5){
+        assert(0 && "Please enter a grid size of greater than 5");
+    }
 
     system_t* system = create_system(n);
     
-    system->grid[14][14] = 1;
-    system->grid[15][16] = 1;
-    system->grid[16][16] = 1;
+    seed_random_percent(system, 0.2);
     
 
     print_system(system);
     while(!system_dead(system)){
         sleep(1);
-        generation_advance(system);
+        evolve(system);
         print_system(system);
         
     }
     printf("\n--System died out in: %d generations\n", system->generation);
-
-    /*
-    
-    */
 }
 
