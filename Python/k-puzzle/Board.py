@@ -52,6 +52,28 @@ class Board:
             return False
         return self.board[x][y]
 
+    def get_number_to_coord(self, number: int):
+        assert number >= 0 and number <= self.num_columns * self.num_rows
+        for i in range(self.num_rows):
+            for j in range(self.num_columns):
+                if self.get_position(i, j) == number:
+                    return (i, j)
+
+    def distance_from_goal_state(self, distance_function):
+        distance = 0
+        for i in range(self.num_rows):
+            for j in range(self.num_columns):
+                src = (i, j)
+                dest = self.get_correct_position_for_number(self.get_position(i, j))
+                distance += distance_function(src, dest)
+        return distance
+
+    def get_correct_position_for_number(self, number: int):
+        assert(number >= 0 and number < self.num_columns * self.num_rows)
+        if number == 0:
+            return (self.num_rows-1, self.num_columns-1)
+        return ((number - 1)//self.num_columns, (number-1)%self.num_columns)
+
     def get_possible_moves(self):
         zero_pos = self.get_zero_position()
         moves = [tuple(self.move(zero_pos, LEFT)), tuple(self.move(zero_pos, RIGHT)), tuple(self.move(zero_pos, UP)), tuple(self.move(zero_pos, DOWN))]
